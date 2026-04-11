@@ -7,7 +7,11 @@ const IconMap: Record<string, any> = {
   Smartphone, Tv, ShoppingBag, Home, Sparkles, Refrigerator, Baby, Dumbbell, Car, Star
 };
 
-export function MegaMenu() {
+interface MegaMenuProps {
+  onSelectCategory: (category: string) => void;
+}
+
+export function MegaMenu({ onSelectCategory }: MegaMenuProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   return (
@@ -20,9 +24,10 @@ export function MegaMenu() {
               key={category.name}
               onMouseEnter={() => setActiveCategory(category.name)}
               onMouseLeave={() => setActiveCategory(null)}
+              onClick={() => onSelectCategory(category.name)}
               className={cn(
                 "flex items-center justify-between px-4 py-3 cursor-pointer transition-colors group",
-                activeCategory === category.name ? "bg-primary-light text-primary" : "hover:bg-gray-50"
+                activeCategory === category.name ? "bg-primary-light text-primary" : "hover:bg-slate-50"
               )}
             >
               <div className="flex items-center gap-3">
@@ -36,17 +41,26 @@ export function MegaMenu() {
                   <h3 className="text-lg font-bold text-secondary mb-6 border-b pb-2">{category.name}</h3>
                   <div className="grid grid-cols-2 gap-x-8 gap-y-4">
                     {category.subcategories.map((sub) => (
-                      <a
+                      <button
                         key={sub}
-                        href="#"
-                        className="text-sm text-muted-foreground hover:text-primary transition-colors py-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectCategory(category.name);
+                        }}
+                        className="text-sm text-left text-muted-foreground hover:text-primary transition-colors py-1"
                       >
                         {sub}
-                      </a>
+                      </button>
                     ))}
                   </div>
                   <div className="mt-8 pt-4 border-t">
-                    <button className="text-primary font-bold text-sm hover:underline">
+                    <button 
+                      className="text-primary font-bold text-sm hover:underline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectCategory(category.name);
+                      }}
+                    >
                       Shop All {category.name} →
                     </button>
                   </div>

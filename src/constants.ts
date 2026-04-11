@@ -2,152 +2,143 @@ import { Category, HeroSlide, Product } from "./types";
 
 export const CATEGORY_STRUCTURE: Category[] = [
   {
-    name: "Kili Featured",
+    name: "New Arrivals",
     icon: "Star",
-    subcategories: ["Top Deals", "Clearance Sale", "Trending Now", "Sponsored", "Recommended", "New User Offers", "Flash Sales"]
+    subcategories: ["Bike Accessories", "Sports Gear", "Lighting", "Phone Accessories"]
   },
   {
-    name: "Phones & Tablets",
-    icon: "Smartphone",
-    subcategories: ["Smartphones", "Refurbished Phones", "Tablets", "Phone Cases", "Screen Protectors", "Power Banks", "Chargers & Cables", "Phone Accessories"]
-  },
-  {
-    name: "Electronics",
-    icon: "Tv",
-    subcategories: ["TVs & Video", "Audio & Music", "Cameras", "Gaming", "Laptops", "Desktop Computers", "Computer Accessories", "Networking", "Smart Home"]
-  },
-  {
-    name: "Fashion",
-    icon: "ShoppingBag",
-    subcategories: ["Women's Clothing", "Men's Clothing", "Shoes", "Bags", "Watches", "Jewelry", "Accessories", "Traditional Wear", "Activewear"]
-  },
-  {
-    name: "Home & Living",
+    name: "Kitchen Essentials",
     icon: "Home",
-    subcategories: ["Furniture", "Kitchen & Dining", "Bedding", "Home Decor", "Lighting", "Storage", "Bath", "Garden & Outdoor", "Home Improvement"]
+    subcategories: ["Cookware", "Kitchen Tools", "Storage", "Dining"]
   },
   {
-    name: "Health & Beauty",
+    name: "Bathroom Accessories",
+    icon: "Bath",
+    subcategories: ["Towel Racks", "Soap Dispensers", "Shower Heads", "Mats"]
+  },
+  {
+    name: "Beauty & Health",
     icon: "Sparkles",
-    subcategories: ["Skincare", "Haircare", "Makeup", "Fragrances", "Personal Care", "Health Care", "Sexual Wellness", "Vitamins & Supplements"]
-  },
-  {
-    name: "Appliances",
-    icon: "Refrigerator",
-    subcategories: ["Refrigerators", "Cookers & Ovens", "Microwaves", "Washing Machines", "Blenders & Mixers", "Irons", "Water Dispensers", "Vacuum Cleaners"]
-  },
-  {
-    name: "Baby & Kids",
-    icon: "Baby",
-    subcategories: ["Baby Care", "Feeding", "Diapers", "Strollers", "Toys", "School Supplies", "Baby Clothing", "Nursery", "Kids Furniture"]
+    subcategories: ["Skincare", "Haircare", "Personal Care", "Health Care"]
   },
   {
     name: "Sports & Outdoor",
     icon: "Dumbbell",
-    subcategories: ["Fitness Equipment", "Sports Wear", "Shoes", "Camping & Hiking", "Bikes", "Team Sports", "Water Sports", "Outdoor Gear"]
+    subcategories: ["Fitness Equipment", "Camping Gear", "Cycling", "Outdoor Gear"]
   },
   {
-    name: "Automotive",
-    icon: "Car",
-    subcategories: ["Car Accessories", "Car Electronics", "Motorcycle", "Tools & Equipment", "Car Care", "Oils & Fluids", "Tyres & Wheels", "Safety"]
+    name: "Electronics",
+    icon: "Tv",
+    subcategories: ["TVs", "Audio", "Cameras", "Gadgets"]
+  },
+  {
+    name: "Home Décor",
+    icon: "Home",
+    subcategories: ["Wall Art", "Lighting", "Mirrors", "Cushions"]
+  },
+  {
+    name: "Sexual Wellness",
+    icon: "Heart",
+    subcategories: ["Enhancement", "Protection", "Toys", "Care"]
   }
 ];
 
 export const PRODUCTS: Product[] = [
   {
     id: 1,
-    name: "Infinix Note 40 Pro 5G - 256GB + 8GB RAM - 108MP Camera",
-    price: "KSh 32,999",
-    oldPrice: "KSh 39,999",
-    image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?q=80&w=800&auto=format&fit=crop",
-    category: "Phones & Tablets",
-    badge: "Hot Deal",
-    rating: 4.7,
-    reviews: 342,
-    discount: 18
+    name: "Portable High-Pressure Bike Pump 120 PSI For Presta Schrader Valves",
+    price: "KSh 1,499",
+    oldPrice: "KSh 2,500",
+    image: "https://nairomarket.co.ke/cdn/shop/files/S38f533816670417697864f77c8585e78p_800x.jpg?v=1712134567",
+    category: "Sports & Outdoor",
+    badge: "New",
+    rating: 4.8,
+    reviews: 124,
+    discount: 40
   },
   {
     id: 2,
-    name: "Samsung Galaxy A15 128GB - 6.5\" Super AMOLED Display",
-    price: "KSh 19,999",
-    oldPrice: "KSh 24,999",
-    image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=800&auto=format&fit=crop",
-    category: "Phones & Tablets",
-    badge: "Bestseller",
-    rating: 4.5,
-    reviews: 528,
-    discount: 20
+    name: "Elastic Compression Knee Support Bandage for Joint Protection",
+    price: "KSh 850",
+    oldPrice: "KSh 1,200",
+    image: "https://nairomarket.co.ke/cdn/shop/files/Sc8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c_800x.jpg?v=1712134567",
+    category: "Sports & Outdoor",
+    badge: "Hot",
+    rating: 4.6,
+    reviews: 89,
+    discount: 29
   },
   {
     id: 3,
-    name: "Men's Casual Sneakers - Breathable Walking Shoes Sports Footwear",
-    price: "KSh 1,899",
-    oldPrice: "KSh 3,499",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
-    category: "Fashion",
-    badge: "Flash Sale",
-    rating: 4.3,
-    reviews: 892,
-    discount: 46
+    name: "Powerful Rechargeable LED Tactical Flashlight with Adjustable Zoom",
+    price: "KSh 1,299",
+    oldPrice: "KSh 1,800",
+    image: "https://nairomarket.co.ke/cdn/shop/files/S9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e_800x.jpg?v=1712134567",
+    category: "New Arrivals",
+    badge: "Best Seller",
+    rating: 4.9,
+    reviews: 210,
+    discount: 28
   },
   {
     id: 4,
-    name: "Vitron 43\" Smart HD TV - Netflix, YouTube, Free Gifts Included",
-    price: "KSh 21,999",
-    oldPrice: "KSh 28,999",
-    image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?q=80&w=800&auto=format&fit=crop",
-    category: "Electronics",
-    badge: "Recommended",
-    rating: 4.6,
-    reviews: 234,
-    discount: 24
+    name: "Magnetic Floating Levitation Globe LED World Map Lamp",
+    price: "KSh 4,500",
+    oldPrice: "KSh 6,500",
+    image: "https://nairomarket.co.ke/cdn/shop/files/S7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a_800x.jpg?v=1712134567",
+    category: "Home Décor",
+    badge: "Unique",
+    rating: 4.7,
+    reviews: 45,
+    discount: 31
   },
   {
     id: 5,
-    name: "TWS Wireless Bluetooth Earphones - Touch Control, Power Bank Case",
-    price: "KSh 999",
-    oldPrice: "KSh 2,499",
-    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=800&auto=format&fit=crop",
-    category: "Electronics",
-    badge: "Top Deal",
-    rating: 4.2,
-    reviews: 1567,
-    discount: 60
+    name: "Titan Gel Gold – Advanced Male Enhancement Gel",
+    price: "KSh 2,500",
+    oldPrice: "KSh 3,500",
+    image: "https://nairomarket.co.ke/cdn/shop/files/S5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b_800x.jpg?v=1712134567",
+    category: "Sexual Wellness",
+    badge: "Popular",
+    rating: 4.5,
+    reviews: 567,
+    discount: 28
   },
   {
     id: 6,
-    name: "Women's Fashion Handbag - Genuine Leather Tote Bag Designer Style",
-    price: "KSh 2,899",
-    oldPrice: "KSh 4,599",
-    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop",
-    category: "Fashion",
-    badge: "Trending",
+    name: "Vintage Moroccan Hollow Iron Lantern Tea Light Hanging Candle Holder",
+    price: "KSh 1,200",
+    oldPrice: "KSh 1,800",
+    image: "https://nairomarket.co.ke/cdn/shop/files/S4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c_800x.jpg?v=1712134567",
+    category: "Home Décor",
+    badge: "Sale",
     rating: 4.8,
-    reviews: 423,
-    discount: 37
+    reviews: 32,
+    discount: 33
   },
   {
     id: 7,
-    name: "RAMTONS 3.5L Electric Kettle - Stainless Steel, Auto Shut-off",
-    price: "KSh 1,499",
-    oldPrice: "KSh 2,299",
-    image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?q=80&w=800&auto=format&fit=crop",
-    category: "Appliances",
-    rating: 4.4,
-    reviews: 678,
-    discount: 35
+    name: "3 in 1 Tear Drop wall mirrors, Teardrop Mirror Wall Decor",
+    price: "KSh 2,800",
+    oldPrice: "KSh 4,000",
+    image: "https://nairomarket.co.ke/cdn/shop/files/S3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d_800x.jpg?v=1712134567",
+    category: "Home Décor",
+    badge: "Elegant",
+    rating: 4.9,
+    reviews: 18,
+    discount: 30
   },
   {
     id: 8,
-    name: "SNDWAY Laser Distance Meter 50M - Digital Range Finder",
-    price: "KSh 2,499",
-    oldPrice: "KSh 3,899",
-    image: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?q=80&w=800&auto=format&fit=crop",
-    category: "Home & Living",
-    badge: "New",
-    rating: 4.9,
-    reviews: 156,
-    discount: 36
+    name: "Pheromone Perfume For Men - Long Lasting Attraction",
+    price: "KSh 1,500",
+    oldPrice: "KSh 2,200",
+    image: "https://nairomarket.co.ke/cdn/shop/files/S2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e_800x.jpg?v=1712134567",
+    category: "Beauty & Health",
+    badge: "Best Seller",
+    rating: 4.7,
+    reviews: 890,
+    discount: 32
   }
 ];
 
@@ -156,8 +147,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     title: "Big Brand Sale",
     subtitle: "Up to 70% OFF",
     description: "Top electronics and fashion deals",
-    bgColor: "#FFE4E1",
-    accentColor: "#E53935",
+    bgColor: "#e7f3ff",
+    accentColor: "#007bff",
     image: "🎉",
     cta: "Shop Now"
   },

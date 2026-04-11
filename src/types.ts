@@ -1,4 +1,4 @@
-export type PageKey = "home" | "categories" | "search" | "product" | "cart" | "account";
+export type PageKey = "home" | "categories" | "search" | "product" | "cart" | "account" | "subcategory";
 
 export type Product = {
   id: number;

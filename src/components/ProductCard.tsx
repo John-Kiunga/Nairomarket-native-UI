@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "motion/react";
-import { Star, ShoppingCart, Heart } from "lucide-react";
+import { Star, ShoppingCart, Heart, Eye } from "lucide-react";
 import { Product } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,11 @@ import { Card, CardContent } from "@/components/ui/card";
 interface ProductCardProps {
   product: Product;
   onPress: (p: Product) => void;
+  onQuickView?: (p: Product) => void;
   key?: React.Key;
 }
 
-export function ProductCard({ product, onPress }: ProductCardProps) {
+export function ProductCard({ product, onPress, onQuickView }: ProductCardProps) {
   return (
     <motion.div
       whileHover={{ y: -5 }}
@@ -23,13 +24,30 @@ export function ProductCard({ product, onPress }: ProductCardProps) {
         className="overflow-hidden h-full cursor-pointer border-none shadow-sm hover:shadow-md transition-shadow group"
         onClick={() => onPress(product)}
       >
-        <div className="relative aspect-square bg-gray-50 overflow-hidden">
+        <div className="relative aspect-square bg-slate-50 overflow-hidden">
           <img
             src={product.image}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             referrerPolicy="no-referrer"
           />
+          
+          {/* Quick View Overlay */}
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="rounded-full font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform"
+              onClick={(e) => {
+                e.stopPropagation();
+                onQuickView?.(product);
+              }}
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              Quick View
+            </Button>
+          </div>
+
           <div className="absolute top-2 left-2 flex flex-col gap-2">
             {product.badge && (
               <Badge className="bg-primary hover:bg-primary-dark text-white border-none px-2 py-0.5 text-[10px] uppercase font-bold">
