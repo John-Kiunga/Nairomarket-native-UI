@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { ChevronRight, Smartphone, Tv, ShoppingBag, Home, Sparkles, Refrigerator, Baby, Dumbbell, Car, Star } from "lucide-react";
+import { ChevronRight, Smartphone, Tv, ShoppingBag, Home, Sparkles, Refrigerator, Baby, Dumbbell, Car, Star, Bath, Heart } from "lucide-react";
 import { CATEGORY_STRUCTURE } from "@/constants";
 import { cn } from "@/lib/utils";
 
 const IconMap: Record<string, any> = {
-  Smartphone, Tv, ShoppingBag, Home, Sparkles, Refrigerator, Baby, Dumbbell, Car, Star
+  Smartphone, Tv, ShoppingBag, Home, Sparkles, Refrigerator, Baby, Dumbbell, Car, Star, Bath, Heart
 };
 
 interface MegaMenuProps {

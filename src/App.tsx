@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { HeroCarousel } from "@/components/HeroCarousel";
@@ -12,10 +12,15 @@ import { useState, useMemo, useEffect } from "react";
 import { PageKey, Product } from "@/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Zap, TrendingUp, Heart, Star, ShoppingCart, X, Filter, ChevronRight, Search as SearchIcon, Trash2, User as UserIcon, Package, MapPin, CreditCard, Settings } from "lucide-react";
+import { Zap, TrendingUp, Heart, Star, ShoppingCart, X, Filter, ChevronRight, Search as SearchIcon, Trash2, User as UserIcon, Package, MapPin, CreditCard, Settings, Home, Bath, Sparkles, Dumbbell, Tv } from "lucide-react";
+
+const IconMap: Record<string, any> = {
+  Star, Home, Bath, Sparkles, Dumbbell, Tv, Heart
+};
 
 export default function App() {
   const [page, setPage] = useState<PageKey>("home");
@@ -24,6 +29,7 @@ export default function App() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [minDiscount, setMinDiscount] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const [cart, setCart] = useState<Product[]>([]);
   const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
 
@@ -94,11 +100,19 @@ export default function App() {
   };
 
   const filteredProducts = useMemo(() => {
+    if (!searchQuery && selectedCategories.length === 0 && minDiscount === 0) return PRODUCTS;
+    
     return PRODUCTS.filter(p => {
       const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(p.category);
       const matchesDiscount = (p.discount || 0) >= minDiscount;
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           p.category.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const searchTerms = searchQuery.toLowerCase().split(" ").filter(t => t.length > 0);
+      const matchesSearch = searchTerms.length === 0 || searchTerms.every(term => 
+        p.name.toLowerCase().includes(term) || 
+        p.category.toLowerCase().includes(term) ||
+        p.badge?.toLowerCase().includes(term)
+      );
+      
       return matchesCategory && matchesDiscount && matchesSearch;
     });
   }, [selectedCategories, minDiscount, searchQuery]);
@@ -110,14 +124,23 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header 
+        currentPage={page}
         onNavigate={setPage} 
         searchQuery={searchQuery} 
         setSearchQuery={setSearchQuery} 
         cartCount={cart.length}
       />
 
-      <main className="flex-1 pb-20 md:pb-0">
-        {page === "home" && (
+      <main className="flex-1 pb-20 md:pb-0 overflow-x-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={page + (page === 'home' ? searchQuery + selectedCategories.join(',') : '')}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            {page === "home" && (
           <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start mb-12">
               {/* Sidebar / MegaMenu */}
@@ -189,8 +212,15 @@ export default function App() {
                 <section>
                   {filteredProducts.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                      {filteredProducts.map(product => (
-                        <ProductCard key={product.id} product={product} onPress={openProduct} onQuickView={openQuickView} />
+                      {filteredProducts.map((product, idx) => (
+                        <motion.div
+                          key={product.id}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: idx * 0.05 }}
+                        >
+                          <ProductCard product={product} onPress={openProduct} onQuickView={openQuickView} />
+                        </motion.div>
                       ))}
                     </div>
                   ) : (
@@ -210,18 +240,21 @@ export default function App() {
                         <Button variant="link" className="text-primary font-bold" onClick={() => setPage("categories")}>VIEW ALL</Button>
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                        {CATEGORY_STRUCTURE.slice(0, 6).map((cat) => (
-                          <div 
-                            key={cat.name}
-                            onClick={() => setSelectedCategories([cat.name])}
-                            className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary transition-all cursor-pointer text-center group"
-                          >
-                            <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-light transition-colors">
-                              <Star className="w-6 h-6 text-primary" />
+                        {CATEGORY_STRUCTURE.slice(0, 6).map((cat) => {
+                          const Icon = IconMap[cat.icon] || Star;
+                          return (
+                            <div 
+                              key={cat.name}
+                              onClick={() => setSelectedCategories([cat.name])}
+                              className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary transition-all cursor-pointer text-center group"
+                            >
+                              <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-light transition-colors">
+                                <Icon className="w-6 h-6 text-primary" />
+                              </div>
+                              <span className="text-sm font-bold text-secondary group-hover:text-primary transition-colors">{cat.name}</span>
                             </div>
-                            <span className="text-sm font-bold text-secondary group-hover:text-primary transition-colors">{cat.name}</span>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </section>
 
@@ -289,26 +322,137 @@ export default function App() {
           </div>
         )}
 
+        {page === "search" && (
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="mb-8">
+              <h1 className="text-3xl font-black text-secondary mb-4 uppercase tracking-tight">Search</h1>
+              <motion.div layoutId="searchBar" className="relative">
+                <Input 
+                  autoFocus
+                  placeholder="What are you looking for?" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-8 rounded-2xl border-2 border-primary/20 focus-visible:ring-primary focus-visible:border-primary text-lg shadow-sm"
+                />
+                <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-primary" />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-400" />
+                  </button>
+                )}
+              </motion.div>
+            </div>
+
+            {searchQuery ? (
+              <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                    {filteredProducts.length} Results Found
+                  </h2>
+                  <Button 
+                    variant="link" 
+                    className="text-primary font-bold p-0 h-auto"
+                    onClick={() => {
+                      setPage("home");
+                    }}
+                  >
+                    VIEW ON HOME PAGE →
+                  </Button>
+                </div>
+                
+                {filteredProducts.length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {filteredProducts.slice(0, 12).map((product, idx) => (
+                      <motion.div
+                        key={product.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                      >
+                        <ProductCard product={product} onPress={openProduct} onQuickView={openQuickView} />
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-gray-200">
+                    <SearchIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-bold text-secondary mb-2">No matches found</h3>
+                    <p className="text-muted-foreground">Try different keywords or browse categories</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-12">
+                <div>
+                  <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6">Popular Categories</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {CATEGORY_STRUCTURE.slice(0, 4).map((cat, idx) => (
+                      <motion.button 
+                        key={cat.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        onClick={() => {
+                          setSelectedCategories([cat.name]);
+                          setPage("home");
+                        }}
+                        className="flex items-center gap-3 p-4 bg-white border border-gray-100 rounded-xl hover:border-primary hover:shadow-md transition-all text-left group"
+                      >
+                        <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                          <Star className="w-5 h-5" />
+                        </div>
+                        <span className="font-bold text-secondary text-sm">{cat.name}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6">Trending Products</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {trending.map((product, idx) => (
+                      <motion.div
+                        key={product.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.4 + idx * 0.1 }}
+                      >
+                        <ProductCard product={product} onPress={openProduct} onQuickView={openQuickView} />
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {page === "categories" && (
           <div className="max-w-7xl mx-auto px-4 py-8">
             <h1 className="text-3xl font-black text-secondary mb-8 uppercase tracking-tight">All Categories</h1>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {CATEGORY_STRUCTURE.map((cat) => (
-                <div 
-                  key={cat.name} 
-                  className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-                  onClick={() => {
-                    setSelectedCategories([cat.name]);
-                    setPage("home");
-                  }}
-                >
-                  <div className="w-12 h-12 bg-primary-light text-primary rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Star className="w-6 h-6" />
+              {CATEGORY_STRUCTURE.map((cat) => {
+                const Icon = IconMap[cat.icon] || Star;
+                return (
+                  <div 
+                    key={cat.name} 
+                    className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                    onClick={() => {
+                      setSelectedCategories([cat.name]);
+                      setPage("home");
+                    }}
+                  >
+                    <div className="w-12 h-12 bg-primary-light text-primary rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-black text-secondary mb-2">{cat.name}</h3>
+                    <p className="text-xs text-muted-foreground uppercase font-bold">{cat.subcategories.length} Subcategories</p>
                   </div>
-                  <h3 className="text-lg font-black text-secondary mb-2">{cat.name}</h3>
-                  <p className="text-xs text-muted-foreground uppercase font-bold">{cat.subcategories.length} Subcategories</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -495,6 +639,8 @@ export default function App() {
             />
           </div>
         )}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <Footer />

@@ -3,15 +3,19 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PageKey } from "@/types";
+import { motion } from "motion/react";
 
 interface HeaderProps {
+  currentPage: PageKey;
   onNavigate: (page: PageKey) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   cartCount: number;
 }
 
-export function Header({ onNavigate, searchQuery, setSearchQuery, cartCount }: HeaderProps) {
+export function Header({ currentPage, onNavigate, searchQuery, setSearchQuery, cartCount }: HeaderProps) {
+  const isSearchPage = currentPage === "search";
+
   return (
     <header className="w-full">
       {/* Top Bar */}
@@ -54,24 +58,29 @@ export function Header({ onNavigate, searchQuery, setSearchQuery, cartCount }: H
 
           {/* Search */}
           <div className="flex-1 max-w-2xl relative group">
-            <div className="flex">
+            <motion.div 
+              layoutId="searchBar"
+              className="flex"
+              animate={isSearchPage ? { opacity: 0, y: -20, pointerEvents: "none" } : { opacity: 1, y: 0, pointerEvents: "auto" }}
+              transition={{ duration: 0.2 }}
+            >
               <div className="relative flex-1">
                 <Input 
                   placeholder="Search for products, brands and categories..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => onNavigate("home")}
+                  onFocus={() => onNavigate("search")}
                   className="w-full pl-12 pr-4 py-6 rounded-l-full border-2 border-primary/20 focus-visible:ring-primary focus-visible:border-primary transition-all bg-gray-50/50"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-primary transition-colors" />
               </div>
               <Button 
                 className="rounded-r-full px-8 py-6 bg-primary hover:bg-primary-dark text-white font-bold shadow-lg shadow-primary/20"
-                onClick={() => onNavigate("home")}
+                onClick={() => onNavigate("search")}
               >
                 SEARCH
               </Button>
-            </div>
+            </motion.div>
           </div>
 
           {/* Actions */}
