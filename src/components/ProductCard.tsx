@@ -10,10 +10,11 @@ interface ProductCardProps {
   product: Product;
   onPress: (p: Product) => void;
   onQuickView?: (p: Product) => void;
+  onAddToCart?: (p: Product) => void;
   key?: React.Key;
 }
 
-export function ProductCard({ product, onPress, onQuickView }: ProductCardProps) {
+export function ProductCard({ product, onPress, onQuickView, onAddToCart }: ProductCardProps) {
   return (
     <motion.div
       whileHover={{ y: -5 }}
@@ -32,12 +33,12 @@ export function ProductCard({ product, onPress, onQuickView }: ProductCardProps)
             referrerPolicy="no-referrer"
           />
           
-          {/* Quick View Overlay */}
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          {/* Quick View & Quick Add Overlay */}
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
             <Button
               variant="secondary"
               size="sm"
-              className="rounded-full font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform"
+              className="w-32 rounded-full font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
               onClick={(e) => {
                 e.stopPropagation();
                 onQuickView?.(product);
@@ -45,6 +46,18 @@ export function ProductCard({ product, onPress, onQuickView }: ProductCardProps)
             >
               <Eye className="w-4 h-4 mr-2" />
               Quick View
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              className="w-32 rounded-full font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75 bg-primary hover:bg-primary-dark"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddToCart?.(product);
+              }}
+            >
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              Quick Add
             </Button>
           </div>
 
@@ -97,7 +110,7 @@ export function ProductCard({ product, onPress, onQuickView }: ProductCardProps)
             className="w-full mt-4 bg-secondary hover:bg-primary text-white transition-colors gap-2"
             onClick={(e) => {
               e.stopPropagation();
-              // Add to cart logic
+              onAddToCart?.(product);
             }}
           >
             <ShoppingCart className="w-4 h-4" />

@@ -6,9 +6,10 @@ interface RecentlyViewedProps {
   products: Product[];
   onProductPress: (p: Product) => void;
   onQuickView: (p: Product) => void;
+  onAddToCart: (p: Product) => void;
 }
 
-export function RecentlyViewed({ products, onProductPress, onQuickView }: RecentlyViewedProps) {
+export function RecentlyViewed({ products, onProductPress, onQuickView, onAddToCart }: RecentlyViewedProps) {
   if (products.length === 0) return null;
 
   return (
@@ -26,6 +27,7 @@ export function RecentlyViewed({ products, onProductPress, onQuickView }: Recent
             product={product} 
             onPress={onProductPress} 
             onQuickView={onQuickView} 
+            onAddToCart={onAddToCart}
           />
         ))}
       </div>

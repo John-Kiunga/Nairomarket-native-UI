@@ -4,11 +4,13 @@ import { Footer } from "@/components/Footer";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { MegaMenu } from "@/components/MegaMenu";
 import { ProductCard } from "@/components/ProductCard";
+import { FlashSale } from "@/components/FlashSale";
 import { RecentlyViewed } from "@/components/RecentlyViewed";
 import { BottomNav } from "@/components/BottomNav";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { PRODUCTS, CATEGORY_STRUCTURE } from "@/constants";
 import { useState, useMemo, useEffect } from "react";
+import { fetchShopifyProducts } from "@/services/shopify";
 import { PageKey, Product } from "@/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,8 +32,20 @@ export default function App() {
   const [minDiscount, setMinDiscount] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [allProducts, setAllProducts] = useState<Product[]>(PRODUCTS);
   const [cart, setCart] = useState<Product[]>([]);
   const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
+
+  // Load products from Shopify if available
+  useEffect(() => {
+    const loadShopify = async () => {
+      const shopifyData = await fetchShopifyProducts();
+      if (shopifyData && shopifyData.length > 0) {
+        setAllProducts(shopifyData);
+      }
+    };
+    loadShopify();
+  }, []);
 
   // Load recently viewed and cart from localStorage
   useEffect(() => {
@@ -40,7 +54,7 @@ export default function App() {
       try {
         const ids = JSON.parse(savedRecently) as number[];
         const products = ids
-          .map(id => PRODUCTS.find(p => p.id === id))
+          .map(id => allProducts.find(p => p.id === id))
           .filter((p): p is Product => !!p);
         setRecentlyViewed(products);
       } catch (e) {
@@ -53,14 +67,14 @@ export default function App() {
       try {
         const ids = JSON.parse(savedCart) as number[];
         const products = ids
-          .map(id => PRODUCTS.find(p => p.id === id))
+          .map(id => allProducts.find(p => p.id === id))
           .filter((p): p is Product => !!p);
         setCart(products);
       } catch (e) {
         console.error("Failed to parse cart", e);
       }
     }
-  }, []);
+  }, [allProducts]);
 
   // Save cart to localStorage
   useEffect(() => {
@@ -100,9 +114,9 @@ export default function App() {
   };
 
   const filteredProducts = useMemo(() => {
-    if (!searchQuery && selectedCategories.length === 0 && minDiscount === 0) return PRODUCTS;
+    if (!searchQuery && selectedCategories.length === 0 && minDiscount === 0) return allProducts;
     
-    return PRODUCTS.filter(p => {
+    return allProducts.filter(p => {
       const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(p.category);
       const matchesDiscount = (p.discount || 0) >= minDiscount;
       
@@ -115,11 +129,11 @@ export default function App() {
       
       return matchesCategory && matchesDiscount && matchesSearch;
     });
-  }, [selectedCategories, minDiscount, searchQuery]);
+  }, [selectedCategories, minDiscount, searchQuery, allProducts]);
 
-  const flashSales = useMemo(() => PRODUCTS.filter(p => p.discount && p.discount >= 30), []);
-  const trending = useMemo(() => PRODUCTS.slice(4, 8), []);
-  const recommended = useMemo(() => PRODUCTS.slice(0, 8), []);
+  const flashSales = useMemo(() => allProducts.filter(p => p.discount && p.discount >= 30), [allProducts]);
+  const trending = useMemo(() => allProducts.slice(4, 8), [allProducts]);
+  const recommended = useMemo(() => allProducts.slice(0, 8), [allProducts]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -219,7 +233,12 @@ export default function App() {
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: idx * 0.05 }}
                         >
-                          <ProductCard product={product} onPress={openProduct} onQuickView={openQuickView} />
+                          <ProductCard 
+                            product={product} 
+                            onPress={openProduct} 
+                            onQuickView={openQuickView} 
+                            onAddToCart={addToCart}
+                          />
                         </motion.div>
                       ))}
                     </div>
@@ -259,22 +278,12 @@ export default function App() {
                     </section>
 
                     {/* Flash Sales */}
-                    <section>
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-primary p-2 rounded-lg text-white">
-                            <Zap className="w-5 h-5 fill-current" />
-                          </div>
-                          <h2 className="text-2xl font-black tracking-tight text-secondary uppercase">Flash Sales</h2>
-                        </div>
-                        <Button variant="link" className="text-primary font-bold">SEE ALL →</Button>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {flashSales.map(product => (
-                          <ProductCard key={product.id} product={product} onPress={openProduct} onQuickView={openQuickView} />
-                        ))}
-                      </div>
-                    </section>
+                    <FlashSale 
+                      products={flashSales} 
+                      onProductPress={openProduct} 
+                      onQuickView={openQuickView}
+                      onAddToCart={addToCart}
+                    />
 
                     {/* Banner */}
                     <div className="bg-primary-dark rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden relative">
@@ -305,7 +314,13 @@ export default function App() {
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {trending.map(product => (
-                          <ProductCard key={product.id} product={product} onPress={openProduct} onQuickView={openQuickView} />
+                          <ProductCard 
+                            key={product.id} 
+                            product={product} 
+                            onPress={openProduct} 
+                            onQuickView={openQuickView} 
+                            onAddToCart={addToCart}
+                          />
                         ))}
                       </div>
                     </section>
@@ -315,6 +330,7 @@ export default function App() {
                       products={recentlyViewed} 
                       onProductPress={openProduct} 
                       onQuickView={openQuickView} 
+                      onAddToCart={addToCart}
                     />
                   </>
                 )}
@@ -372,7 +388,12 @@ export default function App() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.05 }}
                       >
-                        <ProductCard product={product} onPress={openProduct} onQuickView={openQuickView} />
+                        <ProductCard 
+                          product={product} 
+                          onPress={openProduct} 
+                          onQuickView={openQuickView} 
+                          onAddToCart={addToCart}
+                        />
                       </motion.div>
                     ))}
                   </div>
@@ -420,7 +441,12 @@ export default function App() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.4 + idx * 0.1 }}
                       >
-                        <ProductCard product={product} onPress={openProduct} onQuickView={openQuickView} />
+                        <ProductCard 
+                          product={product} 
+                          onPress={openProduct} 
+                          onQuickView={openQuickView} 
+                          onAddToCart={addToCart}
+                        />
                       </motion.div>
                     ))}
                   </div>
@@ -625,8 +651,14 @@ export default function App() {
             <section className="mt-16">
               <h2 className="text-2xl font-black text-secondary mb-8 uppercase tracking-tight">You May Also Like</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {PRODUCTS.slice(0, 4).map(p => (
-                  <ProductCard key={p.id} product={p} onPress={openProduct} onQuickView={openQuickView} />
+                {allProducts.slice(0, 4).map(p => (
+                  <ProductCard 
+                    key={p.id} 
+                    product={p} 
+                    onPress={openProduct} 
+                    onQuickView={openQuickView} 
+                    onAddToCart={addToCart}
+                  />
                 ))}
               </div>
             </section>
@@ -636,6 +668,7 @@ export default function App() {
               products={recentlyViewed.filter(p => p.id !== selectedProduct.id)} 
               onProductPress={openProduct} 
               onQuickView={openQuickView} 
+              onAddToCart={addToCart}
             />
           </div>
         )}
