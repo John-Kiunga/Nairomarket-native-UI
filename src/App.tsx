@@ -27,6 +27,7 @@ const IconMap: Record<string, any> = {
 export default function App() {
   const [page, setPage] = useState<PageKey>("home");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [productTab, setProductTab] = useState<"description" | "specs" | "reviews">("description");
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [minDiscount, setMinDiscount] = useState<number>(0);
@@ -484,32 +485,95 @@ export default function App() {
         )}
 
         {page === "cart" && (
-          <div className="max-w-3xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-black text-secondary mb-8 uppercase tracking-tight">Your Shopping Cart</h1>
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-3xl font-black text-secondary uppercase tracking-tight font-display">Your Shopping Cart</h1>
+              <Badge variant="outline" className="font-bold border-primary text-primary">{cart.length} ITEMS</Badge>
+            </div>
+            
             {cart.length > 0 ? (
-              <div className="space-y-6">
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                  {cart.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-4 p-4 border-b last:border-0">
-                      <img src={item.image} className="w-20 h-20 object-cover rounded-lg" />
-                      <div className="flex-1">
-                        <h3 className="font-bold text-secondary line-clamp-1">{item.name}</h3>
-                        <p className="text-primary font-black">{item.price}</p>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-8 space-y-4">
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    {cart.map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-4 p-6 border-b last:border-0 hover:bg-slate-50/50 transition-colors group">
+                        <div className="w-24 h-24 bg-slate-50 rounded-xl overflow-hidden shrink-0 border border-gray-100">
+                          <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-secondary line-clamp-1 text-lg mb-1">{item.name}</h3>
+                          <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-2">{item.category}</p>
+                          <div className="flex items-center gap-4">
+                            <span className="text-primary font-black text-xl">{item.price}</span>
+                            {item.oldPrice && <span className="text-sm text-muted-foreground line-through">{item.oldPrice}</span>}
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all rounded-full" 
+                            onClick={() => removeFromCart(item.id)}
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </Button>
+                          <div className="flex items-center border border-gray-100 rounded-lg overflow-hidden bg-white">
+                            <button className="px-2 py-1 hover:bg-gray-50 text-xs font-bold">-</button>
+                            <span className="px-3 py-1 text-xs font-black border-x border-gray-100">1</span>
+                            <button className="px-2 py-1 hover:bg-gray-50 text-xs font-bold">+</button>
+                          </div>
+                        </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="text-red-500" onClick={() => removeFromCart(item.id)}>
-                        <Trash2 className="w-5 h-5" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-                <div className="bg-secondary text-white p-6 rounded-2xl shadow-xl">
-                  <div className="flex justify-between items-center mb-6">
-                    <span className="text-lg font-bold opacity-80 uppercase">Total Amount</span>
-                    <span className="text-3xl font-black">KSh {cart.reduce((acc, item) => acc + parseInt(item.price.replace(/\D/g, "")), 0).toLocaleString()}</span>
+                    ))}
                   </div>
-                  <Button className="w-full bg-white text-secondary hover:bg-gray-100 font-black py-8 text-lg rounded-xl">
-                    PROCEED TO CHECKOUT
+                  
+                  <Button 
+                    variant="ghost" 
+                    className="text-primary font-bold gap-2 hover:bg-primary/5"
+                    onClick={() => setPage("home")}
+                  >
+                    <ChevronRight className="w-4 h-4 rotate-180" />
+                    CONTINUE SHOPPING
                   </Button>
+                </div>
+
+                <div className="lg:col-span-4 space-y-6">
+                  <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 className="text-lg font-black text-secondary uppercase mb-6 font-display">Order Summary</h3>
+                    <div className="space-y-4 mb-6">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">Subtotal</span>
+                        <span className="font-bold text-secondary">KSh {cart.reduce((acc, item) => acc + parseInt(item.price.replace(/\D/g, "")), 0).toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">Shipping</span>
+                        <span className="font-bold text-green-600 uppercase">Free</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">Tax</span>
+                        <span className="font-bold text-secondary">KSh 0</span>
+                      </div>
+                      <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
+                        <span className="text-lg font-black text-secondary uppercase font-display">Total</span>
+                        <span className="text-2xl font-black text-primary">KSh {cart.reduce((acc, item) => acc + parseInt(item.price.replace(/\D/g, "")), 0).toLocaleString()}</span>
+                      </div>
+                    </div>
+                    <Button className="w-full bg-primary hover:bg-primary-dark text-white font-black py-8 text-lg rounded-xl shadow-xl shadow-primary/20 gap-2">
+                      CHECKOUT NOW
+                      <ChevronRight className="w-5 h-5" />
+                    </Button>
+                    <p className="text-[10px] text-center text-muted-foreground mt-4 uppercase font-bold tracking-widest">Secure SSL Encryption</p>
+                  </div>
+
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Zap className="w-4 h-4 text-primary fill-current" />
+                      <span className="text-xs font-black text-secondary uppercase">Express Delivery</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed">
+                      Eligible for same-day delivery in Nairobi if ordered within the next 2 hours.
+                    </p>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -526,123 +590,394 @@ export default function App() {
         )}
 
         {page === "account" && (
-          <div className="max-w-4xl mx-auto px-4 py-8">
-            <div className="flex items-center gap-6 mb-12">
-              <div className="w-24 h-24 bg-primary-light rounded-full flex items-center justify-center text-primary">
-                <UserIcon className="w-12 h-12" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-black text-secondary leading-tight">John Doe</h1>
-                <p className="text-muted-foreground font-medium">jkyunger@gmail.com</p>
-                <Badge className="mt-2 bg-primary text-white font-bold">PREMIUM MEMBER</Badge>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { icon: Package, label: "My Orders", desc: "Track, return or buy things again" },
-                { icon: MapPin, label: "Addresses", desc: "Edit addresses for orders" },
-                { icon: CreditCard, label: "Payments", desc: "Manage payment methods" },
-                { icon: Heart, label: "Wishlist", desc: "Your saved items" },
-                { icon: Settings, label: "Settings", desc: "Account preferences" },
-                { icon: X, label: "Logout", desc: "Sign out of your account", color: "text-red-500" }
-              ].map((item, idx) => (
-                <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-4 group">
-                  <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform", item.color || "bg-slate-50 text-secondary")}>
-                    <item.icon className="w-6 h-6" />
+          <div className="max-w-5xl mx-auto px-4 py-8">
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden mb-8">
+              <div className="bg-secondary p-8 md:p-12 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -mr-32 -mt-32" />
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+                  <div className="w-32 h-32 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center text-white border-4 border-white/20 shadow-2xl">
+                    <UserIcon className="w-16 h-16" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-secondary">{item.label}</h3>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
+                      <h1 className="text-4xl font-black font-display uppercase tracking-tight">John Doe</h1>
+                      <Badge className="bg-primary text-white font-black text-[10px] px-3 py-1 rounded-full shadow-lg shadow-primary/20">PREMIUM</Badge>
+                    </div>
+                    <p className="text-white/60 font-medium text-lg mb-4">jkyunger@gmail.com</p>
+                    <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                      <div className="bg-white/5 px-4 py-2 rounded-xl border border-white/10">
+                        <span className="block text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Total Orders</span>
+                        <span className="text-xl font-black">12</span>
+                      </div>
+                      <div className="bg-white/5 px-4 py-2 rounded-xl border border-white/10">
+                        <span className="block text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Wallet Balance</span>
+                        <span className="text-xl font-black">KSh 2,450</span>
+                      </div>
+                    </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 ml-auto text-gray-300" />
+                  <Button className="md:ml-auto bg-white text-secondary hover:bg-gray-100 font-black px-8 py-6 rounded-2xl shadow-xl">
+                    EDIT PROFILE
+                  </Button>
                 </div>
-              ))}
+              </div>
+
+              <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { icon: Package, label: "My Orders", desc: "Track, return or buy things again", count: 12 },
+                  { icon: Heart, label: "Wishlist", desc: "Your saved items", count: 5 },
+                  { icon: CreditCard, label: "Payments", desc: "Manage payment methods", count: 2 },
+                  { icon: MapPin, label: "Addresses", desc: "Edit addresses for orders", count: 1 },
+                  { icon: Sparkles, label: "Rewards", desc: "Your loyalty points", count: "450 pts" },
+                  { icon: Settings, label: "Settings", desc: "Account preferences" },
+                ].map((item, idx) => (
+                  <div key={idx} className="p-6 rounded-2xl border border-gray-50 hover:border-primary/20 hover:bg-primary/5 transition-all cursor-pointer group relative">
+                    <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-secondary mb-4 group-hover:scale-110 transition-transform group-hover:bg-white group-hover:shadow-md">
+                      <item.icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-black text-secondary uppercase tracking-tight mb-1 font-display">{item.label}</h3>
+                    <p className="text-xs text-muted-foreground leading-tight">{item.desc}</p>
+                    {'count' in item && (
+                      <span className="absolute top-6 right-6 text-xs font-black text-primary bg-primary/10 px-2 py-1 rounded-lg">
+                        {item.count}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              <div className="p-8 bg-slate-50 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center">
+                    <X className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-secondary">Danger Zone</h4>
+                    <p className="text-xs text-muted-foreground">Manage sensitive account actions</p>
+                  </div>
+                </div>
+                <Button variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50 font-black gap-2">
+                  SIGN OUT OF ACCOUNT
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
         )}
 
         {page === "product" && selectedProduct && (
           <div className="max-w-7xl mx-auto px-4 py-8">
+            {/* Breadcrumbs */}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-6 overflow-x-auto whitespace-nowrap pb-2">
+              <button onClick={() => setPage("home")} className="hover:text-primary transition-colors">Home</button>
+              <ChevronRight className="w-3 h-3" />
+              <button onClick={() => { setSelectedCategories([selectedProduct.category]); setPage("home"); }} className="hover:text-primary transition-colors">{selectedProduct.category}</button>
+              <ChevronRight className="w-3 h-3" />
+              <span className="text-secondary font-bold truncate">{selectedProduct.name}</span>
+            </div>
+
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 p-8">
-                <div className="space-y-4">
-                  <div className="aspect-square rounded-xl bg-slate-50 overflow-hidden border border-gray-100">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 md:p-8">
+                {/* Left Column: Images */}
+                <div className="lg:col-span-5 space-y-4">
+                  <div className="aspect-square rounded-xl bg-slate-50 overflow-hidden border border-gray-100 group relative">
                     <img 
                       src={selectedProduct.image} 
                       alt={selectedProduct.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
+                    {selectedProduct.discount && (
+                      <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full font-black text-sm shadow-lg">
+                        -{selectedProduct.discount}%
+                      </div>
+                    )}
                   </div>
-                  <div className="grid grid-cols-4 gap-4">
-                    {[1,2,3,4].map(i => (
-                      <div key={i} className="aspect-square rounded-lg bg-slate-50 border border-gray-100 cursor-pointer hover:border-primary transition-colors overflow-hidden">
-                        <img src={selectedProduct.image} className="w-full h-full object-cover opacity-50 hover:opacity-100" />
+                  <div className="grid grid-cols-5 gap-2">
+                    {[1,2,3,4,5].map(i => (
+                      <div key={i} className={cn(
+                        "aspect-square rounded-lg bg-slate-50 border cursor-pointer transition-all overflow-hidden",
+                        i === 1 ? "border-primary ring-2 ring-primary/20" : "border-gray-100 hover:border-primary"
+                      )}>
+                        <img src={selectedProduct.image} className="w-full h-full object-cover" />
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="flex flex-col">
+                {/* Right Column: Details */}
+                <div className="lg:col-span-7 flex flex-col">
                   <div className="mb-6">
-                    <Badge className="bg-primary-light text-primary border-none mb-4 font-bold">
-                      {selectedProduct.category}
-                    </Badge>
-                    <h1 className="text-3xl font-black text-secondary leading-tight mb-4">
+                    <h1 className="text-2xl md:text-3xl font-black text-secondary leading-tight mb-3">
                       {selectedProduct.name}
                     </h1>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 flex-wrap">
                       <div className="flex items-center gap-1 text-yellow-500">
                         {[1,2,3,4,5].map(i => (
                           <Star key={i} className={`w-4 h-4 ${i <= Math.floor(selectedProduct.rating || 0) ? "fill-current" : ""}`} />
                         ))}
                         <span className="text-sm font-bold text-secondary ml-1">{selectedProduct.rating}</span>
                       </div>
-                      <span className="text-sm text-muted-foreground">({selectedProduct.reviews} Verified Reviews)</span>
+                      <span className="text-sm text-muted-foreground">|</span>
+                      <span className="text-sm text-primary font-bold hover:underline cursor-pointer">{selectedProduct.reviews} Verified Reviews</span>
+                      <span className="text-sm text-muted-foreground">|</span>
+                      <span className="text-sm text-muted-foreground uppercase font-bold tracking-tighter">SKU: NM-{selectedProduct.id}</span>
                     </div>
                   </div>
 
-                  <div className="bg-slate-50 p-6 rounded-xl mb-8">
+                  {/* Price Block */}
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-100 mb-6">
                     <div className="flex items-baseline gap-4 mb-2">
                       <span className="text-4xl font-black text-primary">{selectedProduct.price}</span>
                       {selectedProduct.oldPrice && (
-                        <span className="text-xl text-muted-foreground line-through">{selectedProduct.oldPrice}</span>
+                        <span className="text-xl text-muted-foreground line-through decoration-red-500/50">{selectedProduct.oldPrice}</span>
                       )}
                     </div>
-                    {selectedProduct.discount && (
-                      <Badge className="bg-green-500 text-white border-none font-bold">
-                        SAVE {selectedProduct.discount}%
-                      </Badge>
-                    )}
-                  </div>
-
-                  <div className="space-y-4 mb-8">
-                    <div className="flex items-center gap-3 text-sm">
-                      <div className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
-                        <Zap className="w-4 h-4 fill-current" />
-                      </div>
-                      <p><span className="font-bold">Fast Delivery:</span> Get it by tomorrow in Nairobi</p>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                        <TrendingUp className="w-4 h-4" />
-                      </div>
-                      <p><span className="font-bold">Free Returns:</span> Within 7 days of delivery</p>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-green-500 text-white border-none font-bold">IN STOCK</Badge>
+                      {selectedProduct.discount && (
+                        <span className="text-xs font-bold text-green-600 uppercase">Save {selectedProduct.discount}% right now</span>
+                      )}
                     </div>
                   </div>
 
-                  <div className="flex gap-4 mt-auto">
+                  {/* Shipping Block (Kilimall Style) */}
+                  <div className="space-y-4 mb-8 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <MapPin className="w-5 h-5 text-muted-foreground mt-0.5" />
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm font-bold text-secondary">Delivery to Nairobi</span>
+                          <Button variant="link" size="sm" className="h-auto p-0 text-primary font-bold">CHANGE</Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Standard Delivery: Get it by tomorrow</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 flex items-center justify-center">
+                        <CreditCard className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                      <p className="text-sm text-secondary"><span className="font-bold">Shipping Fee:</span> <span className="text-green-600 font-bold">FREE</span></p>
+                    </div>
+                  </div>
+
+                  {/* Variations (Placeholder) */}
+                  <div className="space-y-6 mb-8">
+                    <div>
+                      <h3 className="text-sm font-black text-secondary uppercase mb-3 tracking-wider">Color</h3>
+                      <div className="flex gap-3">
+                        {['Black', 'White', 'Blue'].map((color, idx) => (
+                          <button 
+                            key={color} 
+                            className={cn(
+                              "px-4 py-2 rounded-lg border-2 text-sm font-bold transition-all",
+                              idx === 0 ? "border-primary bg-primary/5 text-primary" : "border-gray-100 hover:border-primary/50"
+                            )}
+                          >
+                            {color}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-sm font-black text-secondary uppercase mb-3 tracking-wider">Quantity</h3>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center border-2 border-gray-100 rounded-xl overflow-hidden">
+                          <button className="px-4 py-2 hover:bg-gray-50 font-bold text-xl">-</button>
+                          <input type="text" value="1" readOnly className="w-12 text-center font-black text-secondary border-x-2 border-gray-100" />
+                          <button className="px-4 py-2 hover:bg-gray-50 font-bold text-xl">+</button>
+                        </div>
+                        <span className="text-xs text-muted-foreground font-medium">99+ pieces available</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 mb-8">
                     <Button 
                       size="lg" 
-                      className="flex-1 bg-primary hover:bg-primary-dark text-white font-black py-8 text-lg shadow-xl shadow-primary/20"
+                      className="flex-1 bg-primary hover:bg-primary-dark text-white font-black py-8 text-lg shadow-xl shadow-primary/20 gap-3"
                       onClick={() => addToCart(selectedProduct)}
                     >
+                      <ShoppingCart className="w-6 h-6" />
                       ADD TO CART
                     </Button>
-                    <Button size="lg" variant="outline" className="py-8 px-6 border-2">
+                    <Button 
+                      size="lg" 
+                      className="flex-1 bg-secondary hover:bg-black text-white font-black py-8 text-lg shadow-xl shadow-secondary/20"
+                    >
+                      BUY NOW
+                    </Button>
+                    <Button size="lg" variant="outline" className="py-8 px-6 border-2 hover:text-red-500 hover:border-red-500 transition-colors">
                       <Heart className="w-6 h-6" />
                     </Button>
                   </div>
+
+                  {/* Service Block */}
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <Zap className="w-3 h-3 fill-current" />
+                      </div>
+                      <span className="text-[10px] font-bold text-secondary uppercase">Fast Delivery</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <TrendingUp className="w-3 h-3" />
+                      </div>
+                      <span className="text-[10px] font-bold text-secondary uppercase">7 Days Return</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <Sparkles className="w-3 h-3" />
+                      </div>
+                      <span className="text-[10px] font-bold text-secondary uppercase">Authentic Only</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <Heart className="w-3 h-3" />
+                      </div>
+                      <span className="text-[10px] font-bold text-secondary uppercase">NairoMarket Care</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Product Tabs (Description/Reviews) */}
+            <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="lg:col-span-8 space-y-8">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="flex border-b border-gray-100">
+                    <button 
+                      onClick={() => setProductTab("description")}
+                      className={cn(
+                        "px-8 py-4 text-sm font-black uppercase tracking-wider transition-all border-b-2",
+                        productTab === "description" ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-secondary"
+                      )}
+                    >
+                      Description
+                    </button>
+                    <button 
+                      onClick={() => setProductTab("specs")}
+                      className={cn(
+                        "px-8 py-4 text-sm font-black uppercase tracking-wider transition-all border-b-2",
+                        productTab === "specs" ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-secondary"
+                      )}
+                    >
+                      Specifications
+                    </button>
+                    <button 
+                      onClick={() => setProductTab("reviews")}
+                      className={cn(
+                        "px-8 py-4 text-sm font-black uppercase tracking-wider transition-all border-b-2",
+                        productTab === "reviews" ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-secondary"
+                      )}
+                    >
+                      Reviews ({selectedProduct.reviews})
+                    </button>
+                  </div>
+                  <div className="p-8">
+                    <AnimatePresence mode="wait">
+                      {productTab === "description" && (
+                        <motion.div
+                          key="description"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <h3 className="text-xl font-black text-secondary mb-4 uppercase">Product Details</h3>
+                          <p className="text-muted-foreground leading-relaxed mb-6">
+                            Experience the pinnacle of quality with the {selectedProduct.name}. This premium product is meticulously crafted to meet the highest standards of performance and durability. Whether you're looking for style, functionality, or both, this is the perfect choice for your needs.
+                          </p>
+                          <ul className="space-y-3">
+                            {['High-quality materials', 'Ergonomic design', 'Durable and long-lasting', 'Easy to use and maintain'].map((item, i) => (
+                              <li key={i} className="flex items-center gap-3 text-sm text-secondary">
+                                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </motion.div>
+                      )}
+
+                      {productTab === "specs" && (
+                        <motion.div
+                          key="specs"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <h3 className="text-xl font-black text-secondary mb-6 uppercase">Technical Specifications</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {[
+                              { label: 'Brand', value: 'NairoMarket Premium' },
+                              { label: 'Model', value: `NM-${selectedProduct.id}` },
+                              { label: 'Category', value: selectedProduct.category },
+                              { label: 'Warranty', value: '1 Year Local Warranty' },
+                              { label: 'Material', value: 'Premium Grade' },
+                              { label: 'Origin', value: 'Imported' }
+                            ].map((spec, i) => (
+                              <div key={i} className="flex justify-between p-3 border-b border-gray-50">
+                                <span className="text-sm font-bold text-muted-foreground uppercase tracking-tighter">{spec.label}</span>
+                                <span className="text-sm font-bold text-secondary">{spec.value}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {productTab === "reviews" && (
+                        <motion.div
+                          key="reviews"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-xl font-black text-secondary uppercase">Customer Reviews</h3>
+                            <Button className="bg-primary hover:bg-primary-dark font-bold">WRITE A REVIEW</Button>
+                          </div>
+                          <div className="space-y-6">
+                            {[1, 2, 3].map((i) => (
+                              <div key={i} className="border-b border-gray-100 pb-6 last:border-0">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold text-secondary">JD</div>
+                                    <span className="font-bold text-secondary text-sm">John Doe</span>
+                                    <Badge className="bg-green-100 text-green-700 border-none text-[10px] font-bold">Verified Purchase</Badge>
+                                  </div>
+                                  <span className="text-xs text-muted-foreground">2 days ago</span>
+                                </div>
+                                <div className="flex items-center gap-1 text-yellow-500 mb-2">
+                                  {[1,2,3,4,5].map(star => <Star key={star} className="w-3 h-3 fill-current" />)}
+                                </div>
+                                <p className="text-sm text-muted-foreground leading-relaxed">
+                                  Excellent product! Exceeded my expectations in every way. The quality is top-notch and the delivery was incredibly fast. Highly recommended!
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-4 space-y-8">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <h3 className="text-lg font-black text-secondary mb-4 uppercase">Seller Information</h3>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white font-black text-xl">N</div>
+                    <div>
+                      <h4 className="font-bold text-secondary">NairoMarket Official</h4>
+                      <p className="text-xs text-muted-foreground">Premium Seller | 98% Positive</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" className="w-full font-bold border-primary text-primary hover:bg-primary hover:text-white">FOLLOW STORE</Button>
                 </div>
               </div>
             </div>
