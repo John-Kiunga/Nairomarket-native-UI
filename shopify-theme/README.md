@@ -20,6 +20,21 @@ This is a custom Shopify theme designed to look and feel like a high-end native 
 -   **Multi-Vendor Ready**: Designed to work seamlessly with Shopify's native architecture and third-party multi-vendor apps.
 -   **No API Keys Needed**: This theme uses Shopify's native Liquid engine, so you don't need to manage Storefront API tokens or GitHub secrets.
 
+## Included Files
+
+-   **Layout**: `layout/theme.liquid` (Main wrapper)
+-   **Templates**: 
+    - `templates/index.liquid` (Homepage)
+    - `templates/collection.liquid` (Category/Listing page)
+    - `templates/product.liquid` (Product detail page)
+-   **Sections**:
+    - `sections/header.liquid` (Sticky navigation)
+    - `sections/footer.liquid` (Site footer)
+    - `sections/hero-carousel.liquid` (Homepage banner)
+    - `sections/flash-sales.liquid` (Timed offers section)
+-   **Snippets**:
+    - `snippets/product-card.liquid` (Reusable product grid item)
+
 ## Font Sizes Applied
 
 -   **Product Page Title**: `text-lg md:text-xl` (Standardized)
