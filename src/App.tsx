@@ -706,7 +706,7 @@ export default function App() {
                 {/* Right Column: Details */}
                 <div className="lg:col-span-7 flex flex-col">
                   <div className="mb-6">
-                    <h1 className="text-2xl md:text-3xl font-black text-secondary leading-tight mb-3">
+                    <h1 className="text-lg md:text-xl font-bold text-secondary leading-tight mb-3">
                       {selectedProduct.name}
                     </h1>
                     <div className="flex items-center gap-4 flex-wrap">
@@ -726,9 +726,9 @@ export default function App() {
                   {/* Price Block */}
                   <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-100 mb-6">
                     <div className="flex items-baseline gap-4 mb-2">
-                      <span className="text-4xl font-black text-primary">{selectedProduct.price}</span>
+                      <span className="text-2xl font-bold text-primary">{selectedProduct.price}</span>
                       {selectedProduct.oldPrice && (
-                        <span className="text-xl text-muted-foreground line-through decoration-red-500/50">{selectedProduct.oldPrice}</span>
+                        <span className="text-lg text-muted-foreground line-through decoration-red-500/50">{selectedProduct.oldPrice}</span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
@@ -1033,7 +1033,7 @@ export default function App() {
                     {quickViewProduct.category}
                   </Badge>
                   <DialogHeader>
-                    <DialogTitle className="text-2xl font-black text-secondary leading-tight text-left">
+                    <DialogTitle className="text-lg font-bold text-secondary leading-tight text-left">
                       {quickViewProduct.name}
                     </DialogTitle>
                   </DialogHeader>
@@ -1050,9 +1050,9 @@ export default function App() {
 
                 <div className="bg-slate-50 p-4 rounded-xl mb-6">
                   <div className="flex items-baseline gap-3">
-                    <span className="text-3xl font-black text-primary">{quickViewProduct.price}</span>
+                    <span className="text-xl font-bold text-primary">{quickViewProduct.price}</span>
                     {quickViewProduct.oldPrice && (
-                      <span className="text-lg text-muted-foreground line-through">{quickViewProduct.oldPrice}</span>
+                      <span className="text-base text-muted-foreground line-through">{quickViewProduct.oldPrice}</span>
                     )}
                   </div>
                 </div>

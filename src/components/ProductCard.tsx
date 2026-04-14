@@ -100,7 +100,7 @@ export function ProductCard({ product, onPress, onQuickView, onAddToCart }: Prod
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-primary">{product.price}</span>
+            <span className="text-base font-bold text-primary">{product.price}</span>
             {product.oldPrice && (
               <span className="text-xs text-muted-foreground line-through">{product.oldPrice}</span>
             )}
