@@ -2,16 +2,18 @@
 
 This is a custom Shopify theme designed to look and feel like a high-end native application, optimized for large marketplaces with multiple vendors.
 
-## How to Install
+## How to Install (CRITICAL: READ THIS)
 
-1.  **Download the files**: You can download these files from your repository.
-2.  **Compress to ZIP**: Zip the contents of the `shopify-theme` folder (so that `layout`, `sections`, `templates`, etc. are at the root of the ZIP).
-3.  **Upload to Shopify**:
-    *   Go to your **Shopify Admin**.
+To avoid **404 errors** or "Invalid Theme" messages, you must zip the files correctly:
+
+1.  **Open the `shopify-theme` folder** on your computer.
+2.  **Select all the folders inside** (`assets`, `config`, `layout`, `sections`, `snippets`, `templates`).
+3.  **Right-click and "Compress"** those items into a single ZIP file.
+    *   **DO NOT** zip the `shopify-theme` folder itself. 
+    *   **DO** zip the *contents* of the folder.
+4.  **Upload to Shopify**:
     *   Go to **Online Store > Themes**.
     *   Click **Add theme > Upload zip file**.
-    *   Upload the ZIP you just created.
-4.  **Customize**: Once uploaded, you can click **Customize** to adjust settings.
 
 ## Features
 
@@ -22,18 +24,24 @@ This is a custom Shopify theme designed to look and feel like a high-end native 
 
 ## Included Files
 
--   **Layout**: `layout/theme.liquid` (Main wrapper)
+-   **Layout**: `layout/theme.liquid`
+-   **Config (Required)**: 
+    - `config/settings_schema.json`
+    - `config/settings_data.json`
 -   **Templates**: 
-    - `templates/index.liquid` (Homepage)
-    - `templates/collection.liquid` (Category/Listing page)
-    - `templates/product.liquid` (Product detail page)
+    - `templates/index.liquid`
+    - `templates/collection.liquid`
+    - `templates/product.liquid`
+    - `templates/cart.liquid`
+    - `templates/search.liquid`
+    - `templates/404.liquid`
 -   **Sections**:
-    - `sections/header.liquid` (Sticky navigation)
-    - `sections/footer.liquid` (Site footer)
-    - `sections/hero-carousel.liquid` (Homepage banner)
-    - `sections/flash-sales.liquid` (Timed offers section)
+    - `sections/header.liquid`
+    - `sections/footer.liquid`
+    - `sections/hero-carousel.liquid`
+    - `sections/flash-sales.liquid`
 -   **Snippets**:
-    - `snippets/product-card.liquid` (Reusable product grid item)
+    - `snippets/product-card.liquid`
 
 ## Font Sizes Applied
 
